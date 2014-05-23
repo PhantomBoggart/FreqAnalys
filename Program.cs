@@ -11,13 +11,16 @@ namespace StatAnalys
 {
     class Program
     {
+        
+        const int array_length=0x100;
+        const int array_wide = 0x2;
         [STAThread]
         static void Main(string[] args)
         {
-            int[] original_statistic = new int[0x100];
-            int[] encrypted_statistic = new int[0x100];
-            int[,] original_sorted = new int[0x100,0x2];
-            int[,] encrypted_sorted = new int[0x100, 0x2];
+            int[] original_statistic = new int[array_length];
+            int[] encrypted_statistic = new int[array_length];
+            int[,] original_sorted = new int[array_length, array_wide];
+            int[,] encrypted_sorted = new int[array_length, array_wide];
             byte[] encrypted;
             
             int encrypted_length = 0;
@@ -85,35 +88,8 @@ namespace StatAnalys
                 }
             }
 
-            for (int i = 0; i <= 0xFF; i++)
-            {
-                original_sorted[i, 0] = i;
-                original_sorted[i, 1] = original_statistic[i];
-                encrypted_sorted[i, 0] = i;
-                encrypted_sorted[i, 1] = encrypted_statistic[i];
-            }
+            sorting(ref original_sorted,original_statistic,ref encrypted_sorted,encrypted_statistic);
 
-            for (int i = 0; i <= 0xFF; i++) {
-                for (int j = 0xFF; j >= i; j--) {
-                    if (original_sorted[j, 1] > original_sorted[i, 1]) {
-                        int a = original_sorted[i, 1], b = original_sorted[i, 0];
-                        original_sorted[i, 1] = original_sorted[j, 1];
-                        original_sorted[i, 0] = original_sorted[j, 0];
-                        original_sorted[j, 1] = a;
-                        original_sorted[j, 0] = b;
-                       }
-                    if (encrypted_sorted[j, 1] > encrypted_sorted[i, 1])
-                    {
-                        int a = encrypted_sorted[i, 1], b = encrypted_sorted[i, 0];
-                        encrypted_sorted[i, 1] = encrypted_sorted[j, 1];
-                        encrypted_sorted[i, 0] = encrypted_sorted[j, 0];
-                        encrypted_sorted[j, 1] = a;
-                        encrypted_sorted[j, 0] = b;
-                    }
-
-
-                }
-            }
             /* byte[] encrypted_ = new Byte[encrypted_length];
             for (int i = 0; i < encrypted_length; i++) {
 
@@ -126,15 +102,29 @@ namespace StatAnalys
 
                 Console.WriteLine("\nСтатистика по байтам в порядке возрастания\ni,Символ,Символы оригинала,Символы шифр. файла, \n");
             
-            
+            table_printing(original_sorted,original_statistic,encrypted_sorted,encrypted_statistic);
+
+            Console.WriteLine("\nНажмите Enter для продолжения\n");
+
+            Console.ReadKey();
+
+
+
+
+
+        }
+
+        static void table_printing(int[,] original_sorted, int[] original_statistic,int[,] encrypted_sorted, int[] encrypted_statistic)
+        {
+
             for (int i = 0x0; i <= 0xFF; i++)
             {
-                bool first_err=false, second_err=false, third_err=false;
+                bool first_err = false, second_err = false, third_err = false;
                 first_err = ((i <= 0xF) && (i >= 0x7));
-                second_err = ((original_sorted[i,0] <= 0xF) && (original_sorted[i,0] >= 0x7));
+                second_err = ((original_sorted[i, 0] <= 0xF) && (original_sorted[i, 0] >= 0x7));
                 third_err = ((encrypted_sorted[i, 0] <= 0xF) && (encrypted_sorted[i, 0] >= 0x7));
-                
-                if (first_err&&second_err&&third_err)
+
+                if (first_err && second_err && third_err)
                 {
                     Console.WriteLine("{0:X2}| {1:X2} | {2,4} | {3,4}  | {6:X2}:{5:X2}  | {4:X2}:{5:X2}  ", i, i /*Convert.ToChar(i)*/, original_statistic[i], encrypted_statistic[i], encrypted_sorted[i, 0] /*Convert.ToChar(encrypted_sorted[i, 0])*/, encrypted_sorted[i, 1], original_sorted[i, 0] /*Convert.ToChar(original_sorted[i, 0])*/, original_sorted[i, 1]);
                 }
@@ -166,27 +156,46 @@ namespace StatAnalys
                 {
                     Console.WriteLine("{0:X2}| {1,4} | {2,4} | {3,4}  | {6:X2}:{7,4}  | {4:X2}:{5,4}  ", i, Convert.ToChar(i), original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
                 }
-                
-                /*else if ((original_sorted[i, 0] > 0xF || original_sorted[i, 0] > 0x7))
-                {
-                
-                }
-                else
-                {
-                    Console.WriteLine("{0:X2}| {1:X3}| {2,4}  | {3,4} | {4:X2}:{7,4}  | {4:X2}:{5,4}  ", i, i, original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
-                }*/
-                
+
             }
-            Console.WriteLine("\nНажмите Enter для продолжения\n");
-
-            Console.ReadKey();
-
-
-
-
 
         }
 
+        static void sorting(ref int[,] original_sorted,int[] original_statistic,ref int[,] encrypted_sorted,int[] encrypted_statistic)
+        { 
+        
+            for (int i = 0; i <= 0xFF; i++)
+            {
+                original_sorted[i, 0] = i;
+                original_sorted[i, 1] = original_statistic[i];
+                encrypted_sorted[i, 0] = i;
+                encrypted_sorted[i, 1] = encrypted_statistic[i];
+            }
+
+            for (int i = 0; i <= 0xFF; i++) {
+                for (int j = 0xFF; j >= i; j--) {
+                    if (original_sorted[j, 1] > original_sorted[i, 1]) {
+                        int a = original_sorted[i, 1], b = original_sorted[i, 0];
+                        original_sorted[i, 1] = original_sorted[j, 1];
+                        original_sorted[i, 0] = original_sorted[j, 0];
+                        original_sorted[j, 1] = a;
+                        original_sorted[j, 0] = b;
+                       }
+                    if (encrypted_sorted[j, 1] > encrypted_sorted[i, 1])
+                    {
+                        int a = encrypted_sorted[i, 1], b = encrypted_sorted[i, 0];
+                        encrypted_sorted[i, 1] = encrypted_sorted[j, 1];
+                        encrypted_sorted[i, 0] = encrypted_sorted[j, 0];
+                        encrypted_sorted[j, 1] = a;
+                        encrypted_sorted[j, 0] = b;
+                    }
+
+
+                }
+            }
+            return;
+        }
+        
         static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
         {
             // Check arguments. 
