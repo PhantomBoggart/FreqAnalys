@@ -129,14 +129,53 @@ namespace StatAnalys
             
             for (int i = 0x0; i <= 0xFF; i++)
             {
-                if ((i > 0xF) || (i < 0x8))
+                bool first_err=false, second_err=false, third_err=false;
+                first_err = ((i <= 0xF) && (i >= 0x7));
+                second_err = ((original_sorted[i,0] <= 0xF) && (original_sorted[i,0] >= 0x7));
+                third_err = ((encrypted_sorted[i, 0] <= 0xF) && (encrypted_sorted[i, 0] >= 0x7));
+                
+                if (first_err&&second_err&&third_err)
                 {
-                    Console.WriteLine("{0:X2}| {1,2} | {2,4} | {3,4}  | {4:X2}:{5,4}  | {6:X2}:{7,4}  ", i, Convert.ToChar(i), original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1],Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
+                    Console.WriteLine("{0:X2}| {1:X2} | {2,4} | {3,4}  | {6:X2}:{5:X2}  | {4:X2}:{5:X2}  ", i, i /*Convert.ToChar(i)*/, original_statistic[i], encrypted_statistic[i], encrypted_sorted[i, 0] /*Convert.ToChar(encrypted_sorted[i, 0])*/, encrypted_sorted[i, 1], original_sorted[i, 0] /*Convert.ToChar(original_sorted[i, 0])*/, original_sorted[i, 1]);
+                }
+                else if (first_err && second_err)
+                {
+                    Console.WriteLine("{0:X2}| {1:X2} | {2,4} | {3,4}  | {6:X2}:{7,4}  | {4:X2}:{5:X2}  ", i, i /*Convert.ToChar(i)*/, original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], original_sorted[i, 0] /*Convert.ToChar(original_sorted[i, 0])*/, original_sorted[i, 1]);
+                }
+                else if (second_err && third_err)
+                {
+                    Console.WriteLine("{0:X2}| {1,4} | {2,4} | {3,4}  | {6:X2}:{7:X2}  | {4:X2}:{5:X2}  ", i, Convert.ToChar(i), original_statistic[i], encrypted_statistic[i], encrypted_sorted[i, 0] /*Convert.ToChar(encrypted_sorted[i, 0])*/, encrypted_sorted[i, 1], original_sorted[i, 0] /*Convert.ToChar(original_sorted[i, 0])*/, original_sorted[i, 1]);
+                }
+                else if (third_err && first_err)
+                {
+                    Console.WriteLine("{0:X2}| {1:X2} | {2,4} | {3,4}  | {6:X2}:{7:X2}  | {4:X2}:{5,4}  ", i, i /*Convert.ToChar(i)*/, original_statistic[i], encrypted_statistic[i], encrypted_sorted[i, 0] /*Convert.ToChar(encrypted_sorted[i, 0])*/, encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
+                }
+                else if (first_err)
+                {
+                    Console.WriteLine("{0:X2}|   {1:X2} | {2,4} | {3,4}  | {6:X2}:{7,4}  | {4:X2}:{5,4}  ", i, i /*Convert.ToChar(i)*/, original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
+                }
+                else if (second_err)
+                {
+                    Console.WriteLine("{0:X2}| {1,4} | {2,4} | {3,4}  | {6:X2}:{7,3}  | {4:X2}:{5,4}  ", i, Convert.ToChar(i), original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], original_sorted[i, 0] /*Convert.ToChar(original_sorted[i, 0])*/, original_sorted[i, 1]);
+                }
+                else if (third_err)
+                {
+                    Console.WriteLine("{0:X2}| {1,4} | {2,4} | {3,4}  | {6:X2}:{7,4}  | {4:X2}:{5,3}  ", i, Convert.ToChar(i), original_statistic[i], encrypted_statistic[i], encrypted_sorted[i, 0] /*Convert.ToChar(encrypted_sorted[i, 0])*/, encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
                 }
                 else
                 {
-                    Console.WriteLine("{0:X2}| {1:X3}| {2,4}  | {3,4} | {4:X2}:{5,4}  | {6:X2}:{7,4}  ", i, i, original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
+                    Console.WriteLine("{0:X2}| {1,4} | {2,4} | {3,4}  | {6:X2}:{7,4}  | {4:X2}:{5,4}  ", i, Convert.ToChar(i), original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
                 }
+                
+                /*else if ((original_sorted[i, 0] > 0xF || original_sorted[i, 0] > 0x7))
+                {
+                
+                }
+                else
+                {
+                    Console.WriteLine("{0:X2}| {1:X3}| {2,4}  | {3,4} | {4:X2}:{7,4}  | {4:X2}:{5,4}  ", i, i, original_statistic[i], encrypted_statistic[i], Convert.ToChar(encrypted_sorted[i, 0]), encrypted_sorted[i, 1], Convert.ToChar(original_sorted[i, 0]), original_sorted[i, 1]);
+                }*/
+                
             }
             Console.WriteLine("\nНажмите Enter для продолжения\n");
 
